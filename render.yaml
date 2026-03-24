@@ -1,0 +1,12 @@
+services:
+  - type: worker
+    name: linear-slack-bot
+    runtime: docker
+    plan: free
+    envVars:
+      - key: LINEAR_API_KEY
+        sync: false
+      - key: SLACK_BOT_TOKEN
+        sync: false
+      - key: SLACK_CHANNEL_ID
+        sync: false
