@@ -19,14 +19,18 @@ SLACK_CHANNEL_ID = os.environ.get("SLACK_CHANNEL_ID", "")
 SLACK_POST_URL = "https://slack.com/api/chat.postMessage"
 
 # ---------------------------------------------------------------------------
-# Hardcoded Slack user mappings for 16px Agency team
+# Hardcoded Slack user mappings for Masonry workspace
 # ---------------------------------------------------------------------------
 SLACK_USER_MAP = {
-    "akshay": "U088D28B9HQ",
-    "asif": "U088FA91UDA",
-    "gaurav": "U089CE8GUBX",
+    "gaurav": "U08E514NQHX",
+    "hemesh": "U08C06C2T7Z",
+    "shreyansh": "U09LBMWCMDL",
+    "vasanth": "U09Q9UKRUMU",
+    "junaid": "U08D3GAAPS4",
+    "prateek": "U0ALY4P8C74",
+    "rutvik": "U0AMJV6B88J",
 }
-GAURAV_SLACK_ID = "U089CE8GUBX"
+GAURAV_SLACK_ID = "U08E514NQHX"
 
 # ---------------------------------------------------------------------------
 # Priority labels
