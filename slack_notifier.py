@@ -7,6 +7,7 @@ Uses only Python stdlib.
 
 import json
 import os
+import re
 import urllib.request
 import urllib.error
 from datetime import datetime
@@ -123,19 +124,46 @@ def post_to_slack(text):
         return False
 
 # ---------------------------------------------------------------------------
-# Summary helper
+# Description cleaning / summary helpers
 # ---------------------------------------------------------------------------
 
+def clean_description(desc):
+    """Strip markdown and escape sequences, return plain text capped at 200 chars."""
+    if not desc:
+        return ""
+    # Replace literal \n (escaped newline in JSON strings) and real newlines with space
+    text = desc.replace("\\n", " ").replace("\n", " ").replace("\r", " ")
+    # Strip markdown links: [text](url) -> text
+    text = re.sub(r'\[([^\]]+)\]\([^)]*\)', r'\1', text)
+    # Strip bare URLs
+    text = re.sub(r'https?://\S+', '', text)
+    # Strip markdown bold/italic: **text** -> text, *text* -> text, __text__ -> text
+    text = re.sub(r'\*\*([^*]*)\*\*', r'\1', text)
+    text = re.sub(r'__([^_]*)__', r'\1', text)
+    text = re.sub(r'\*([^*]*)\*', r'\1', text)
+    text = re.sub(r'_([^_]*)_', r'\1', text)
+    # Strip escaped asterisks and other escaped chars
+    text = re.sub(r'\\([*_`#\[\]()>|])', r'\1', text)
+    # Strip markdown headings
+    text = re.sub(r'#+\s*', '', text)
+    # Strip blockquote markers
+    text = re.sub(r'^\s*>\s*', '', text, flags=re.MULTILINE)
+    # Strip inline code
+    text = re.sub(r'`[^`]*`', '', text)
+    # Collapse multiple spaces
+    text = re.sub(r'  +', ' ', text).strip()
+    # Truncate to 200 chars at a word boundary
+    if len(text) > 200:
+        text = text[:200].rsplit(' ', 1)[0].rstrip('.,;:') + '…'
+    return text
+
+
 def _summarize_ticket(title, description):
-    """Create a brief natural language summary from title and description."""
+    """Create a clean plain-text summary from title and description."""
     if description:
-        desc = description[:300].strip()
-        for end_char in [". ", ".\n", "! ", "?\n"]:
-            idx = desc.rfind(end_char)
-            if idx > 50:
-                desc = desc[:idx + 1]
-                break
-        return desc
+        text = clean_description(description)
+        if text:
+            return text
     return "This ticket is about %s." % title.lower().rstrip(".")
 
 # ---------------------------------------------------------------------------
@@ -265,8 +293,8 @@ def notify_new_comment(data):
     else:
         assignee_tag = "Unassigned"
 
-    body_trimmed = comment_body[:500]
-    quoted = "\n".join("> " + line for line in body_trimmed.split("\n"))
+    body_trimmed = clean_description(comment_body)
+    quoted = "> " + body_trimmed if body_trimmed else ""
 
     lines = [
         "\U0001f4ac *New comment on %s*" % link,
