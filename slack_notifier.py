@@ -30,6 +30,17 @@ SLACK_USER_MAP = {
     "prateek": "U0ALY4P8C74",
     "rutvik": "U0AMJV6B88J",
 }
+EMAIL_TO_SLACK_MAP = {
+    "gaurav@masonry.so": "U08E514NQHX",
+    "hemezh@gmail.com": "U08C06C2T7Z",
+    "hemesh@masonry.so": "U08C06C2T7Z",
+    "arorashreyansh2023@gmail.com": "U09LBMWCMDL",
+    "vasanth@masonry.so": "U09Q9UKRUMU",
+    "junaid@masonry.so": "U08D3GAAPS4",
+    "junaid1460@gmail.com": "U08D3GAAPS4",
+    "prateekjangid10@gmail.com": "U0ALY4P8C74",
+    "jadhavrutvik24@gmail.com": "U0AMJV6B88J",
+}
 GAURAV_SLACK_ID = "U08E514NQHX"
 
 # ---------------------------------------------------------------------------
@@ -56,14 +67,22 @@ def log(msg):
 # ---------------------------------------------------------------------------
 
 def resolve_slack_user(name, email=None):
-    """Match by first name against SLACK_USER_MAP. Return <@ID> or plain name."""
-    if not name:
+    """Resolve a Linear user to a Slack mention. Checks email first, then first name."""
+    if not name and not email:
         return "Unassigned"
-    first_name = name.strip().split()[0].lower()
-    uid = SLACK_USER_MAP.get(first_name)
-    if uid:
-        return "<@%s>" % uid
-    return name
+    # 1. Email lookup (most reliable)
+    if email:
+        uid = EMAIL_TO_SLACK_MAP.get(email.strip().lower())
+        if uid:
+            return "<@%s>" % uid
+    # 2. First-name lookup
+    if name:
+        first_name = name.strip().split()[0].lower()
+        uid = SLACK_USER_MAP.get(first_name)
+        if uid:
+            return "<@%s>" % uid
+    # 3. Fallback to plain name
+    return name or "Unassigned"
 
 # ---------------------------------------------------------------------------
 # Slack posting
