@@ -30,6 +30,7 @@ SLACK_USER_MAP = {
     "junaid": "U08D3GAAPS4",
     "prateek": "U0ALY4P8C74",
     "rutvik": "U0AMJV6B88J",
+    "himanshu": "U0AMU238M2N",
 }
 EMAIL_TO_SLACK_MAP = {
     "gaurav@masonry.so": "U08E514NQHX",
@@ -41,6 +42,8 @@ EMAIL_TO_SLACK_MAP = {
     "junaid1460@gmail.com": "U08D3GAAPS4",
     "prateekjangid10@gmail.com": "U0ALY4P8C74",
     "jadhavrutvik24@gmail.com": "U0AMJV6B88J",
+    "himps.khandekar@gmail.com": "U0AMU238M2N",
+    "himanshu91999@gmail.com": "U0AMU238M2N",
 }
 GAURAV_SLACK_ID = "U08E514NQHX"
 

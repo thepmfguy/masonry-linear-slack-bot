@@ -99,6 +99,22 @@ def handle_webhook(payload):
     webhook_id = payload.get("webhookId", "?")
     log("Webhook received: action=%s type=%s webhookId=%s" % (action, event_type, webhook_id))
 
+    # --- Team filter: only process Masonry events ---
+    if event_type == "Issue":
+        team_data = data.get("team", {})
+        team_name = team_data.get("name", "") if isinstance(team_data, dict) else str(team_data)
+        if team_name and team_name != "Masonry":
+            log("Skipping non-Masonry team event: %s" % team_name)
+            return
+
+    if event_type == "Comment":
+        issue_data = data.get("issue", {})
+        team_data = issue_data.get("team", {})
+        team_name = team_data.get("name", "") if isinstance(team_data, dict) else str(team_data)
+        if team_name and team_name != "Masonry":
+            log("Skipping non-Masonry comment: %s" % team_name)
+            return
+
     # --- Issue events ---
     if event_type == "Issue":
         if action == "create":
